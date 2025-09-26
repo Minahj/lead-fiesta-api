@@ -220,6 +220,31 @@ Common error types:
 
 ## Production Deployment
 
+### Coolify Deployment (Recommended)
+
+This project is optimized for [Coolify](https://coolify.io) deployment on your VPS.
+
+1. **Set base directory:** `/api` (contains `requirements.txt` and `manage.py`)
+
+2. **Environment Variables in Coolify:**
+   ```env
+   SECRET_KEY=your-production-secret-key
+   DEBUG=False
+   ALLOWED_HOSTS=localhost,127.0.0.1,your-domain.com
+   RESIDENTIAL_PROXY_URL=your-proxy-url
+   DATACENTER_PROXY_URL=your-proxy-url
+   CORS_ALLOWED_ORIGINS=https://your-domain.com
+   SECURE_SSL_REDIRECT=True
+   ```
+
+3. **Coolify automatically handles:**
+   - Gunicorn server setup
+   - SSL certificates
+   - Domain configuration
+   - Health checks
+
+### Manual Production Setup
+
 1. **Set production environment:**
    ```env
    DEBUG=False
@@ -229,7 +254,7 @@ Common error types:
 
 2. **Use production WSGI server:**
    ```bash
-   pip install gunicorn
+   cd api
    gunicorn --bind 0.0.0.0:8000 --workers 4 lead_scraper_api.wsgi:application
    ```
 
