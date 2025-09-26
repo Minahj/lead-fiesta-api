@@ -1,0 +1,353 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="gradient-bg text-white">
+    <div class="container mx-auto px-6 py-16">
+        <div class="text-center">
+            <h1 class="text-5xl font-bold mb-4">
+                <i class="fas fa-search-plus mr-3"></i>Lead Fiesta Profile API
+            </h1>
+            <p class="text-xl mb-8 opacity-90">
+                Extract valuable lead information from Instagram and TikTok profiles instantly
+            </p>
+            <div class="flex justify-center space-x-4">
+                <div class="bg-white/20 backdrop-blur-sm rounded-lg p-4">
+                    <i class="fab fa-instagram text-2xl mr-2"></i>
+                    <span>Instagram Scraping</span>
+                </div>
+                <div class="bg-white/20 backdrop-blur-sm rounded-lg p-4">
+                    <i class="fab fa-tiktok text-2xl mr-2"></i>
+                    <span>TikTok Scraping</span>
+                </div>
+                <div class="bg-white/20 backdrop-blur-sm rounded-lg p-4">
+                    <i class="fas fa-bolt text-2xl mr-2"></i>
+                    <span>Real-time Results</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Main Content -->
+<div class="container mx-auto px-6 py-12">
+    <!-- API Testing Section -->
+    <div class="max-w-4xl mx-auto mb-16">
+        <h2 class="text-3xl font-bold text-center mb-8 text-gray-800">
+            <i class="fas fa-rocket mr-3 text-purple-600"></i>Test the API
+        </h2>
+        
+        <!-- Platform Selection -->
+        <div class="flex justify-center mb-8">
+            <div class="bg-white rounded-lg shadow-lg p-2 flex space-x-2">
+                <button id="instagram-btn" class="platform-btn bg-purple-600 text-white px-6 py-3 rounded-lg font-semibold transition-all duration-300" data-platform="instagram">
+                    <i class="fab fa-instagram mr-2"></i>Instagram
+                </button>
+                <button id="tiktok-btn" class="platform-btn bg-gray-200 text-gray-600 px-6 py-3 rounded-lg font-semibold transition-all duration-300" data-platform="tiktok">
+                    <i class="fab fa-tiktok mr-2"></i>TikTok
+                </button>
+            </div>
+        </div>
+
+        <!-- URL Input Section -->
+        <div class="grid md:grid-cols-2 gap-8">
+            <!-- Instagram Card -->
+            <div id="instagram-card" class="bg-white rounded-xl shadow-lg p-8 card-hover">
+                <div class="text-center mb-6">
+                    <div class="w-16 h-16 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <i class="fab fa-instagram text-2xl text-white"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold text-gray-800">Instagram Scraper</h3>
+                    <p class="text-gray-600 mt-2">Extract lead data from Instagram profiles</p>
+                </div>
+                
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Instagram Profile URL or Username</label>
+                        <input type="text" id="instagram-url" 
+                               placeholder="https://instagram.com/username or just username" 
+                               class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-300">
+                    </div>
+                    <button onclick="scrapeProfile('instagram')" 
+                            class="w-full bg-gradient-to-r from-purple-600 to-pink-600 text-white py-3 px-6 rounded-lg font-semibold hover:from-purple-700 hover:to-pink-700 transition-all duration-300 transform hover:scale-105">
+                        <i class="fas fa-search mr-2"></i>Scrape Instagram Profile
+                    </button>
+                </div>
+            </div>
+
+            <!-- TikTok Card -->
+            <div id="tiktok-card" class="bg-white rounded-xl shadow-lg p-8 card-hover">
+                <div class="text-center mb-6">
+                    <div class="w-16 h-16 bg-gradient-to-r from-gray-800 to-gray-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <i class="fab fa-tiktok text-2xl text-white"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold text-gray-800">TikTok Scraper</h3>
+                    <p class="text-gray-600 mt-2">Extract lead data from TikTok profiles</p>
+                </div>
+                
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">TikTok Profile URL or Username</label>
+                        <input type="text" id="tiktok-url" 
+                               placeholder="https://tiktok.com/@username or just username" 
+                               class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-500 focus:border-transparent transition-all duration-300">
+                    </div>
+                    <button onclick="scrapeProfile('tiktok')" 
+                            class="w-full bg-gradient-to-r from-gray-800 to-gray-600 text-white py-3 px-6 rounded-lg font-semibold hover:from-gray-900 hover:to-gray-700 transition-all duration-300 transform hover:scale-105">
+                        <i class="fas fa-search mr-2"></i>Scrape TikTok Profile
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Loading Section -->
+        <div id="loading" class="loading text-center py-8">
+            <div class="inline-flex items-center px-6 py-3 bg-blue-100 rounded-lg">
+                <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-blue-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+                <span class="text-blue-800 font-medium">Scraping profile data...</span>
+            </div>
+        </div>
+
+        <!-- Results Section -->
+        <div id="results" class="result-container mt-8">
+            <div class="bg-white rounded-xl shadow-lg p-8">
+                <h3 class="text-2xl font-bold text-gray-800 mb-6 flex items-center">
+                    <i class="fas fa-chart-line mr-3 text-green-600"></i>Scraped Data
+                </h3>
+                <div id="result-content"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Features Section -->
+    <div class="max-w-6xl mx-auto mb-16">
+        <h2 class="text-3xl font-bold text-center mb-12 text-gray-800">
+            <i class="fas fa-star mr-3 text-yellow-500"></i>Key Features
+        </h2>
+        <div class="grid md:grid-cols-3 gap-8">
+            <div class="bg-white rounded-xl shadow-lg p-8 text-center card-hover">
+                <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <i class="fas fa-envelope text-2xl text-blue-600"></i>
+                </div>
+                <h3 class="text-xl font-bold mb-3 text-gray-800">Email Extraction</h3>
+                <p class="text-gray-600">Automatically extract email addresses from profile bios with advanced regex patterns.</p>
+            </div>
+            
+            <div class="bg-white rounded-xl shadow-lg p-8 text-center card-hover">
+                <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <i class="fas fa-phone text-2xl text-green-600"></i>
+                </div>
+                <h3 class="text-xl font-bold mb-3 text-gray-800">Phone Detection</h3>
+                <p class="text-gray-600">Smart phone number detection with international format recognition and validation.</p>
+            </div>
+            
+            <div class="bg-white rounded-xl shadow-lg p-8 text-center card-hover">
+                <div class="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <i class="fas fa-shield-alt text-2xl text-purple-600"></i>
+                </div>
+                <h3 class="text-xl font-bold mb-3 text-gray-800">Retry Logic</h3>
+                <p class="text-gray-600">Built-in retry mechanisms with exponential backoff for reliable data extraction.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- API Documentation Section -->
+    <div class="max-w-4xl mx-auto">
+        <div class="bg-gray-900 rounded-xl shadow-2xl p-8 text-white">
+            <h2 class="text-3xl font-bold mb-6 flex items-center">
+                <i class="fas fa-code mr-3 text-yellow-400"></i>API Documentation
+            </h2>
+            
+            <div class="grid md:grid-cols-2 gap-8">
+                <div>
+                    <h3 class="text-xl font-bold mb-4 text-green-400">Instagram Endpoint</h3>
+                    <div class="bg-gray-800 rounded-lg p-4 mb-4">
+                        <p class="text-sm text-gray-300 mb-2">POST</p>
+                        <code class="text-yellow-300">/api/instagram-profile-lead-scraper/</code>
+                    </div>
+                    <div class="bg-gray-800 rounded-lg p-4">
+                        <p class="text-sm text-gray-300 mb-2">Request Body:</p>
+                        <pre class="text-green-300 text-sm">{"url": "username_or_url"}</pre>
+                    </div>
+                </div>
+                
+                <div>
+                    <h3 class="text-xl font-bold mb-4 text-blue-400">TikTok Endpoint</h3>
+                    <div class="bg-gray-800 rounded-lg p-4 mb-4">
+                        <p class="text-sm text-gray-300 mb-2">POST</p>
+                        <code class="text-yellow-300">/api/tiktok-profile-lead-scraper/</code>
+                    </div>
+                    <div class="bg-gray-800 rounded-lg p-4">
+                        <p class="text-sm text-gray-300 mb-2">Request Body:</p>
+                        <pre class="text-green-300 text-sm">{"url": "username_or_url"}</pre>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="mt-8 text-center">
+                <a href="/api/docs/" target="_blank" 
+                   class="inline-flex items-center px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-all duration-300 transform hover:scale-105">
+                    <i class="fas fa-book mr-2"></i>
+                    View Full API Documentation
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Platform switching
+    document.querySelectorAll('.platform-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            // Update button states
+            document.querySelectorAll('.platform-btn').forEach(b => {
+                b.classList.remove('bg-purple-600', 'text-white');
+                b.classList.add('bg-gray-200', 'text-gray-600');
+            });
+            this.classList.remove('bg-gray-200', 'text-gray-600');
+            this.classList.add('bg-purple-600', 'text-white');
+            
+            // You can add platform-specific logic here if needed
+        });
+    });
+
+    // Scraping function
+    async function scrapeProfile(platform) {
+        const urlInput = document.getElementById(`${platform}-url`);
+        const url = urlInput.value.trim();
+        
+        if (!url) {
+            alert('Please enter a profile URL or username');
+            return;
+        }
+        
+        // Show loading
+        document.getElementById('loading').style.display = 'block';
+        document.getElementById('results').style.display = 'none';
+        
+        try {
+            const endpoint = `/api/${platform}-profile-lead-scraper/`;
+            const response = await axios.post(endpoint, { url: url });
+            
+            // Hide loading
+            document.getElementById('loading').style.display = 'none';
+            
+            // Show results
+            displayResults(response.data, platform);
+            
+        } catch (error) {
+            document.getElementById('loading').style.display = 'none';
+            let errorMessage = 'An error occurred while scraping the profile.';
+            
+            if (error.response && error.response.data) {
+                errorMessage = error.response.data.message || errorMessage;
+            }
+            
+            displayError(errorMessage);
+        }
+    }
+    
+    function displayResults(data, platform) {
+        const resultContent = document.getElementById('result-content');
+        const platformIcon = platform === 'instagram' ? 'fab fa-instagram' : 'fab fa-tiktok';
+        
+        let emailsHtml = '';
+        if (data.emails && data.emails.length > 0) {
+            emailsHtml = data.emails.map(email => 
+                `<span class="inline-block bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm mr-2 mb-2">
+                    <i class="fas fa-envelope mr-1"></i>${email.email}
+                </span>`
+            ).join('');
+        } else {
+            emailsHtml = '<span class="text-gray-500 italic">No emails found</span>';
+        }
+        
+        let phonesHtml = '';
+        if (data.phone && data.phone.length > 0) {
+            phonesHtml = data.phone.map(phone => 
+                `<span class="inline-block bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm mr-2 mb-2">
+                    <i class="fas fa-phone mr-1"></i>${phone.number} <small>(${phone.type})</small>
+                </span>`
+            ).join('');
+        } else {
+            phonesHtml = '<span class="text-gray-500 italic">No phone numbers found</span>';
+        }
+        
+        resultContent.innerHTML = `
+            <div class="space-y-6">
+                <div class="flex items-center mb-4">
+                    <i class="${platformIcon} text-2xl mr-3 text-purple-600"></i>
+                    <h4 class="text-xl font-bold text-gray-800">Profile Data</h4>
+                </div>
+                
+                <div class="grid gap-6">
+                    <div class="bg-gray-50 rounded-lg p-4">
+                        <h5 class="font-semibold text-gray-700 mb-2 flex items-center">
+                            <i class="fas fa-link mr-2 text-blue-500"></i>Profile URL
+                        </h5>
+                        <div class="flex items-center space-x-2">
+                            <a href="${data.url}" target="_blank" class="text-blue-600 hover:underline break-all">${data.url}</a>
+                            <button onclick="copyToClipboard('${data.url}', this)" 
+                                    class="copy-btn bg-blue-500 text-white px-2 py-1 rounded text-xs hover:bg-blue-600">
+                                <i class="fas fa-copy"></i>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-gray-50 rounded-lg p-4">
+                        <h5 class="font-semibold text-gray-700 mb-2 flex items-center">
+                            <i class="fas fa-user mr-2 text-purple-500"></i>Biography
+                        </h5>
+                        <p class="text-gray-600 whitespace-pre-wrap">${data.bio || 'No biography available'}</p>
+                    </div>
+                    
+                    <div class="bg-gray-50 rounded-lg p-4">
+                        <h5 class="font-semibold text-gray-700 mb-3 flex items-center">
+                            <i class="fas fa-envelope mr-2 text-blue-500"></i>Emails
+                        </h5>
+                        <div>${emailsHtml}</div>
+                    </div>
+                    
+                    <div class="bg-gray-50 rounded-lg p-4">
+                        <h5 class="font-semibold text-gray-700 mb-3 flex items-center">
+                            <i class="fas fa-phone mr-2 text-green-500"></i>Phone Numbers
+                        </h5>
+                        <div>${phonesHtml}</div>
+                    </div>
+                </div>
+                
+                <div class="bg-blue-50 rounded-lg p-4 mt-6">
+                    <h5 class="font-semibold text-blue-800 mb-2 flex items-center">
+                        <i class="fas fa-code mr-2"></i>Raw JSON Response
+                    </h5>
+                    <div class="bg-white rounded border p-3 overflow-auto">
+                        <pre class="text-sm text-gray-600">${JSON.stringify(data, null, 2)}</pre>
+                    </div>
+                    <button onclick="copyToClipboard('${JSON.stringify(data)}', this)" 
+                            class="copy-btn mt-2 bg-blue-500 text-white px-3 py-1 rounded text-sm hover:bg-blue-600">
+                        <i class="fas fa-copy mr-1"></i>Copy JSON
+                    </button>
+                </div>
+            </div>
+        `;
+        
+        document.getElementById('results').style.display = 'block';
+        document.getElementById('results').scrollIntoView({ behavior: 'smooth' });
+    }
+    
+    function displayError(message) {
+        const resultContent = document.getElementById('result-content');
+        resultContent.innerHTML = `
+            <div class="bg-red-50 border border-red-200 rounded-lg p-6 text-center">
+                <i class="fas fa-exclamation-triangle text-red-500 text-3xl mb-4"></i>
+                <h4 class="text-xl font-bold text-red-800 mb-2">Error</h4>
+                <p class="text-red-600">${message}</p>
+            </div>
+        `;
+        document.getElementById('results').style.display = 'block';
+    }
+</script>
+{% endblock %}

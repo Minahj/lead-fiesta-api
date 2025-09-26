@@ -1,0 +1,23 @@
+# Django and DRF
+Django>=5.0,<5.1
+djangorestframework>=3.15.0
+django-cors-headers>=4.3.0
+drf-spectacular>=0.27.0
+
+# Environment configuration
+python-decouple>=3.8
+
+# Web scraping
+requests>=2.31.0
+parsel>=1.8.1
+tenacity>=8.2.3
+
+# Phone number parsing
+phonenumbers>=8.13.0
+
+# Production server
+gunicorn>=21.2.0
+whitenoise>=6.6.0
+
+# Development tools
+django-debug-toolbar>=4.2.0
